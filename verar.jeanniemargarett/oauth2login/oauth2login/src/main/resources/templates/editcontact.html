@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Contact</title>
+</head>
+<body>
+<h1>Edit Contact</h1>
+
+<form action="/api/contacts/update" method="post">
+    <input type="hidden" name="resourceName" th:value="${contact.resourceName}">
+
+    <label>First Name:</label>
+    <input type="text" name="firstName" th:value="${contact.names[0].givenName}" required><br>
+
+    <label>Last Name:</label>
+    <input type="text" name="lastName" th:value="${contact.names[0].familyName}" required><br>
+
+    <label>Emails (comma-separated):</label>
+    <input type="text" name="emails" th:value="${#strings.listJoin(contact.emailAddresses.![value], ',')}" required><br>
+
+    <label>Phone Numbers (comma-separated):</label>
+    <input type="text" name="phoneNumbers" th:value="${#strings.listJoin(contact.phoneNumbers.![value], ',')}" required><br>
+
+    <button type="submit">Update Contact</button>
+</form>
+
+<a href="/contacts">Back to Contacts</a>
+</body>
+</html>
