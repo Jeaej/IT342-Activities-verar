@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -15,19 +14,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
+                        // Allow unauthenticated access to the home ("/") and login ("/login") pages
                         .requestMatchers("/", "/login").permitAll()
+                        // Require authentication for all other requests
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/user-info", true) // Redirect to Thymeleaf page after login
+                        // Redirect the user to "/user-info" after a successful OAuth2 login
+                        .defaultSuccessUrl("/user-info", true)
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        // Redirect to home ("/") after logging out
+                        .logoutSuccessUrl("/login")
+                        // Invalidate session and clear authentication on logout
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                 )
-
-
+                // Disable CSRF protection (useful for APIs, but reconsider for forms)
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
